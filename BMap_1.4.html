@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>获取地区轮廓线</title>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4">
+</script>
+<style type="text/css">
+body{font-size:13px;margin:10px}
+#container{width:800px;height:600px;border:1px solid gray}
+</style>
+</head>
+<body>
+<div id="container"></div>
+<br />
+输入省、直辖市或县名称：<input type="text" id="districtName" style="width:100px" value="杭州市">
+<input type="button" onclick="getBoundary()" value="获取轮廓线">
+
+<script type="text/javascript">
+var map = new BMap.Map("container");
+map.centerAndZoom(new BMap.Point(120.153,30.276328), 8);
+map.addControl(new BMap.NavigationControl({type: BMAP_NAVIGATION_CONTROL_ZOOM}));
+map.enableScrollWheelZoom();
+
+function getBoundary(){       
+    var bdary = new BMap.Boundary();
+    var name = document.getElementById("districtName").value;
+    //var fso = new ActiveXObject("Scripting.FileSystemObject"); 
+    //var f=fso.createtextfile("F:\\application\\echarts\\Echarts\\hangzhou.txt",2,true);
+    bdary.get(name, function(rs){       //获取行政区域
+        map.clearOverlays();        //清除地图覆盖物       
+        var count = rs.boundaries.length; //行政区域的点有多少个
+        for(var i = 0; i < count; i++){
+            var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 1, strokeColor: "#000000"}); //建立多边形覆盖物
+            map.addOverlay(ply);  //添加覆盖物
+            map.setViewport(ply.getPath());    //调整视野         
+        };
+        console.log(rs.boundaries[0]);
+        //f.write(rs.boundaries[0]);
+        //f.close()
+    });   
+}
+
+</script>
+</body>
+</html>
